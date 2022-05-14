@@ -16,6 +16,8 @@ const db = process.env.DATABASE;
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 import * as solanaWeb3 from "@solana/web3.js";
 
+console.log("ok ready");
+
 discordModals(client);
 // Function command from /functions/command
 command(client);
