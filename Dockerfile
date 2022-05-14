@@ -1,14 +1,14 @@
 FROM node:latest
 
-RUN mkdir -p /whitelist
-WORKDIR /whitelist
+RUN mkdir -p /discord-whitelist
+WORKDIR /discord-whitelist
 
-COPY package.json /whitelist
+COPY package.json /discord-whitelist
 RUN npm install -g typescript
 RUN npm install -g ts-node
 RUN npm install
 
-COPY . /whitelist
+COPY . /discord-whitelist
 
 CMD ["npm", "start"]
 
