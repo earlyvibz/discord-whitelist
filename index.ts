@@ -1,3 +1,5 @@
+console.log("ok ready");
+
 import whitelist from "./database/shema/whitelist";
 import whitelisted from "./database/shema/whitelisted";
 import command from "./functions/command";
@@ -15,8 +17,6 @@ const guildId = process.env.GUILD_ID;
 const db = process.env.DATABASE;
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 import * as solanaWeb3 from "@solana/web3.js";
-
-console.log("ok ready");
 
 discordModals(client);
 // Function command from /functions/command
