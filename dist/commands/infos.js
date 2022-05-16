@@ -25,9 +25,10 @@ module.exports = {
             const currentWl = yield whitelist_1.default.find({ serverId: serverId });
             const wlEmbed = new discord_js_1.MessageEmbed().setDescription("Info whitelist");
             const channelId = yield interaction.channelId;
+            console.log(currentWl);
             try {
                 for (const wl of currentWl) {
-                    return wlEmbed.addField(`${wl === null || wl === void 0 ? void 0 : wl.title}`, `Id : ${wl._id}`, true);
+                    wlEmbed.addField(`${wl === null || wl === void 0 ? void 0 : wl.title}`, `Id : ${wl._id}`, true);
                 }
                 __1.client.channels.cache.get(channelId).send({ embeds: [wlEmbed] });
                 interaction.reply({ content: "Informations :" });

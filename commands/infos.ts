@@ -1,5 +1,4 @@
 import { SlashCommandBuilder, client } from "..";
-import guild from "../database/shema/guild";
 import whitelist from "../database/shema/whitelist";
 import { MessageEmbed } from "discord.js";
 
@@ -16,7 +15,7 @@ module.exports = {
 
     try {
       for (const wl of currentWl) {
-        return wlEmbed.addField(`${wl?.title}`, `Id : ${wl._id}`, true);
+        wlEmbed.addField(`${wl?.title}`, `Id : ${wl._id}`, true);
       }
 
       client.channels.cache.get(channelId).send({ embeds: [wlEmbed] });

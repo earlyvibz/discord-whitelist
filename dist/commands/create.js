@@ -79,6 +79,11 @@ module.exports = {
                         value: price.toString(),
                         inline: true,
                     },
+                    {
+                        name: "Role",
+                        value: `<@&${permitted_role}>`,
+                        inline: true,
+                    },
                 ],
                 author: {
                     name: "WhitelistEasy",
@@ -97,7 +102,7 @@ module.exports = {
                         date_install: Date.now(),
                     }).save();
                     const wl = yield new whitelist_1.default({
-                        serveurId: serveurId,
+                        serverId: serveurId,
                         title: title,
                         blockchain: blockchain,
                         price: price,
@@ -117,7 +122,7 @@ module.exports = {
                 }
                 else {
                     const wl = yield new whitelist_1.default({
-                        serveurId: serveurId,
+                        serverId: serveurId,
                         title: title,
                         blockchain: blockchain,
                         description: desc,

@@ -81,6 +81,11 @@ module.exports = {
           value: price.toString(),
           inline: true,
         },
+        {
+          name: "Role",
+          value: `<@&${permitted_role}>`,
+          inline: true,
+        },
       ],
       author: {
         name: "WhitelistEasy",

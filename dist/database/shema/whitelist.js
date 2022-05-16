@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const WhitelistShema = new mongoose_1.Schema({
-    serveurId: {
+    serverId: {
         type: String,
         required: true,
     },
