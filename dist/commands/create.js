@@ -97,6 +97,7 @@ module.exports = {
                         date_install: Date.now(),
                     }).save();
                     const wl = yield new whitelist_1.default({
+                        serveurId: serveurId,
                         title: title,
                         blockchain: blockchain,
                         price: price,
@@ -116,6 +117,7 @@ module.exports = {
                 }
                 else {
                     const wl = yield new whitelist_1.default({
+                        serveurId: serveurId,
                         title: title,
                         blockchain: blockchain,
                         description: desc,

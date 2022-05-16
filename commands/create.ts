@@ -101,6 +101,7 @@ module.exports = {
         }).save();
 
         const wl = await new whitelist({
+          serveurId: serveurId,
           title: title,
           blockchain: blockchain,
           price: price,
@@ -125,6 +126,7 @@ module.exports = {
         });
       } else {
         const wl = await new whitelist({
+          serveurId: serveurId,
           title: title,
           blockchain: blockchain,
           description: desc,

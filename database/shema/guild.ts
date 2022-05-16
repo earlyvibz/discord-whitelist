@@ -4,7 +4,7 @@ export interface IGuild {
   serveur_id: Number;
   name: String;
   date_install: Date;
-  whitelists: Types.ObjectId;
+  whitelists: Types.Array<String>;
 }
 
 const GuildShema = new Schema<IGuild>({
@@ -22,8 +22,7 @@ const GuildShema = new Schema<IGuild>({
   },
   whitelists: [
     {
-      type: Schema.Types.ObjectId,
-      ref: "Whitelist",
+      type: Array,
     },
   ],
 });

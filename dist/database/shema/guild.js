@@ -16,8 +16,7 @@ const GuildShema = new mongoose_1.Schema({
     },
     whitelists: [
         {
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: "Whitelist",
+            type: Array,
         },
     ],
 });
