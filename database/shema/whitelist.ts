@@ -1,7 +1,7 @@
 import { model, Schema, Types } from "mongoose";
 
 export interface IWhitelist {
-  serveurId: string;
+  serverId: string;
   title: String;
   description: String;
   blockchain: String;
@@ -12,7 +12,7 @@ export interface IWhitelist {
 }
 
 const WhitelistShema = new Schema<IWhitelist>({
-  serveurId: {
+  serverId: {
     type: String,
     required: true,
   },
