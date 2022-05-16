@@ -1,5 +1,3 @@
-console.log("ok ready");
-
 import whitelist from "./database/shema/whitelist";
 import whitelisted from "./database/shema/whitelisted";
 import command from "./functions/command";
