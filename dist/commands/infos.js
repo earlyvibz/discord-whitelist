@@ -24,11 +24,16 @@ module.exports = {
             const wl = yield whitelist_1.default.find();
             const wlEmbed = new discord_js_1.MessageEmbed().setDescription("Info whitelist");
             const channelId = yield interaction.channelId;
-            wl.forEach((element) => {
-                return wlEmbed.addField(`${element.title}`, `Id : ${element._id}`, true);
-            });
-            __1.client.channels.cache.get(channelId).send({ embeds: [wlEmbed] });
-            interaction.reply({ content: "Informations :" });
+            try {
+                wl.forEach((element) => {
+                    return wlEmbed.addField(`${element.title}`, `Id : ${element._id}`, true);
+                });
+                __1.client.channels.cache.get(channelId).send({ embeds: [wlEmbed] });
+                interaction.reply({ content: "Informations :" });
+            }
+            catch (e) {
+                console.log(e);
+            }
         });
     },
 };

@@ -1,14 +1,17 @@
 import { Collection } from "discord.js";
-import fs from "node:fs";
+const fs = require("fs");
+
+const path = require("path");
 
 const command = (client: any) => {
   client.commands = new Collection();
-  const commandFiles = fs
-    .readdirSync("./commands")
-    .filter((file: String) => file.endsWith(".js"));
+  const commandsPath = "../commands";
+
+  const commandFiles = fs.readdirSync("./dist/commands");
 
   for (const file of commandFiles) {
-    const command = require(`../commands/${file}`);
+    const filePath = path.join(commandsPath, file);
+    const command = require(filePath);
     client.commands.set(command.data.name, command);
   }
 };

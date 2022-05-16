@@ -67,6 +67,7 @@ client.once("ready", () => __awaiter(void 0, void 0, void 0, function* () {
         yield mongoose.connect(db, {
             keepAlive: true,
         });
+        console.log("mongo ok");
     }
     catch (e) {
         console.log(e);
