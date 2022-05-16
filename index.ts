@@ -26,6 +26,7 @@ client.once("ready", async () => {
     await mongoose.connect(db, {
       keepAlive: true,
     });
+    console.log("mongo ok");
   } catch (e) {
     console.log(e);
   }
