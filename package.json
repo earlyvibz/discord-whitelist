@@ -7,7 +7,7 @@
     "lint": "eslint index.ts",
     "dev-deploy": "env-cmd -f .env.dev ts-node deploy-commands.ts",
     "dev": "env-cmd -f .env.dev ts-node index.ts",
-    "start": " npm run build && env-cmd -f .env node dist/index.js",
+    "start": "npm run build && node dist/index.js",
     "build": "tsc --project tsconfig.json"
   },
   "keywords": [],
