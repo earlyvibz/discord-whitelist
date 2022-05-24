@@ -58,7 +58,7 @@ module.exports = {
             const desc = yield interaction.options.getString("description");
             const price = yield interaction.options.getNumber("price");
             const blockchain = yield interaction.options.getString("blockchain");
-            const permitted_role = yield interaction.options.getRole("permitted-role")
+            const permittedRole = yield interaction.options.getRole("permitted-role")
                 .id;
             const channelId = yield interaction.options.getChannel("channel")
                 .id;
@@ -81,7 +81,7 @@ module.exports = {
                     },
                     {
                         name: "Role",
-                        value: `<@&${permitted_role}>`,
+                        value: `<@&${permittedRole}>`,
                         inline: true,
                     },
                 ],
@@ -94,7 +94,7 @@ module.exports = {
                     url: "https://i.ibb.co/0QmRrhr/logowl.png",
                 },
             };
-            yield guild_1.default.find({ serveurId: serveurId }).then((guildFound) => __awaiter(this, void 0, void 0, function* () {
+            yield guild_1.default.find({ serveurId }).then((guildFound) => __awaiter(this, void 0, void 0, function* () {
                 if (!guildFound.length) {
                     yield new guild_1.default({
                         serveur_id: serveurId,
@@ -103,11 +103,11 @@ module.exports = {
                     }).save();
                     const wl = yield new whitelist_1.default({
                         serverId: serveurId,
-                        title: title,
-                        blockchain: blockchain,
-                        price: price,
+                        title,
+                        blockchain,
+                        price,
                         description: desc,
-                        permitted_role: permitted_role,
+                        permitted_role: permittedRole,
                         date: Date.now(),
                     }).save();
                     yield guild_1.default.findOneAndUpdate({ serveur_id: serveurId }, {
@@ -123,11 +123,11 @@ module.exports = {
                 else {
                     const wl = yield new whitelist_1.default({
                         serverId: serveurId,
-                        title: title,
-                        blockchain: blockchain,
+                        title,
+                        blockchain,
                         description: desc,
-                        price: price,
-                        permitted_role: permitted_role,
+                        price,
+                        permitted_role: permittedRole,
                         date: Date.now(),
                     }).save();
                     yield guild_1.default.findOneAndUpdate({ serveur_id: serveurId }, {

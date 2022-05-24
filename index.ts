@@ -1,20 +1,23 @@
+import dotenv from "dotenv";
+import * as solanaWeb3 from "@solana/web3.js";
 import whitelist from "./database/shema/whitelist";
 import whitelisted from "./database/shema/whitelisted";
 import command from "./functions/command";
-const { Modal, TextInputComponent, showModal } = require("discord-modals");
-import dotenv from "dotenv";
 import modalReply from "./functions/modalReply";
+
+const { Modal, TextInputComponent, showModal } = require("discord-modals");
 const mongoose = require("mongoose");
 const { Client, Intents } = require("discord.js");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const discordModals = require("discord-modals");
+
 dotenv.config();
+const env = process.env.NODE_ENV;
 const token = process.env.DISCORD_TOKEN;
 const clientId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
 const db = process.env.DATABASE;
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
-import * as solanaWeb3 from "@solana/web3.js";
 
 discordModals(client);
 // Function command from /functions/command
@@ -47,24 +50,46 @@ client.on("interactionCreate", async (interaction: any) => {
   } else if (interaction.isButton()) {
     const buttonId = interaction.customId;
 
-    const modal = new Modal() // We create a Modal
-      .setCustomId(buttonId)
-      .setTitle("add your wallet")
-      .addComponents(
-        new TextInputComponent() // We create a Text Input Component
-          .setCustomId("walletId")
-          .setLabel("Your address")
-          .setStyle("SHORT") //IMPORTANT: Text Input Component Style can be 'SHORT' or 'LONG'
-          .setMinLength(42)
-          .setMaxLength(44)
-          .setPlaceholder("0x0000...")
-          .setRequired(true) // If it's required or not
+    if (buttonId.includes("verify")) {
+      const _id = buttonId.substring(7);
+      const pseudo = `${interaction.user.username}#${interaction.user.discriminator}`;
+
+      const wlArr = await whitelisted.findOne(
+        { username: pseudo },
+        "whitelists"
       );
 
-    showModal(modal, {
-      client: client, // Client to show the Modal through the Discord API.
-      interaction: interaction, // Show the modal with interaction data.
-    });
+      if (wlArr?.whitelists.includes(_id)) {
+        await interaction.reply({
+          content: "Your address is registered ✅",
+          ephemeral: true,
+        });
+      } else {
+        await interaction.reply({
+          content: "Your address is not registered ❌",
+          ephemeral: true,
+        });
+      }
+    } else {
+      const modal = new Modal() // We create a Modal
+        .setCustomId(buttonId)
+        .setTitle("add your wallet")
+        .addComponents(
+          new TextInputComponent() // We create a Text Input Component
+            .setCustomId("walletId")
+            .setLabel("Your address")
+            .setStyle("SHORT") // IMPORTANT: Text Input Component Style can be 'SHORT' or 'LONG'
+            .setMinLength(42)
+            .setMaxLength(44)
+            .setPlaceholder("0x0000...")
+            .setRequired(true) // If it's required or not
+        );
+
+      showModal(modal, {
+        client, // Client to show the Modal through the Discord API.
+        interaction, // Show the modal with interaction data.
+      });
+    }
   }
 });
 
@@ -74,12 +99,11 @@ client.on("modalSubmit", async (modal: any) => {
   const result: boolean = regex.test(address);
   const username: string = `${modal.user.username}#${modal.user.discriminator}`;
   const modalId: string = modal.customId;
-  const userWl = await whitelisted.findOne({ username: username });
+  const userWl = await whitelisted.findOne({ username });
   const currentWl = await whitelist.findOne({ _id: modalId });
-  const permitted_role = currentWl?.permitted_role;
-  const price = currentWl?.price!;
+  const permittedRole = currentWl?.permitted_role;
   const blockchain = currentWl?.blockchain!;
-  let verifyRole = modal.member._roles.includes(permitted_role);
+  const verifyRole = modal.member._roles.includes(permittedRole);
   let verifyFormatAddress: boolean | undefined;
 
   if (blockchain === "SOL") {
@@ -94,28 +118,28 @@ client.on("modalSubmit", async (modal: any) => {
   }
 
   if (userWl?.whitelists.includes(modalId)) {
-    modalReply({ content: "You are already registered ! ❌", modal: modal });
+    modalReply({ content: "You are already registered ! ❌", modal });
   } else if (verifyFormatAddress === false) {
     modalReply({
       content: "Your address is not correctly formatted ! ❌",
-      modal: modal,
+      modal,
     });
   } else if (verifyRole === false) {
     modalReply({
-      content: `You don't have the right role ! ❌`,
-      modal: modal,
+      content: "You don't have the right role ! ❌",
+      modal,
     });
   } else {
     if (userWl === null) {
       await new whitelisted({
-        address: address,
-        username: username,
+        address,
+        username,
         date_enter: Date.now(),
         whitelists: modalId,
       }).save();
     } else {
       await whitelisted.updateOne(
-        { username: username },
+        { username },
         {
           $addToSet: {
             whitelists: modalId,
@@ -135,11 +159,11 @@ client.on("modalSubmit", async (modal: any) => {
     );
     modalReply({
       content: "Congrats ! You're whitelisted ✅",
-      modal: modal,
+      modal,
     });
   }
 });
 
 client.login(token);
 
-export { token, clientId, guildId, SlashCommandBuilder, client };
+export { token, clientId, guildId, SlashCommandBuilder, client, env };

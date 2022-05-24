@@ -40,9 +40,8 @@ module.exports = {
 
     await interaction.deferReply();
 
-    if (choice == "json") {
+    if (choice === "json") {
       const arr: Object[] = [];
-      let jsonArr;
 
       for (const e of wl?.whitelisted!) {
         const obj = {
@@ -51,7 +50,7 @@ module.exports = {
         arr.push(obj);
       }
 
-      jsonArr = JSON.stringify(arr);
+      const jsonArr = JSON.stringify(arr);
 
       fs.writeFile(`${wl?.title}.json`, jsonArr, "utf8", function (err) {
         if (err) {
@@ -66,8 +65,8 @@ module.exports = {
       interaction.editReply({ content: "Your JSON file is ready ! ✅" });
 
       fs.unlinkSync(`./${wl?.title}.json`);
-    } else if (choice == "csv") {
-      let arr: Object[] = [];
+    } else if (choice === "csv") {
+      const arr: Object[] = [];
 
       for (const e of wl?.whitelisted!) {
         const obj: Obj = { address: e[0] };

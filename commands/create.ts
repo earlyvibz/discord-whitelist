@@ -59,7 +59,7 @@ module.exports = {
     const blockchain: string = await interaction.options.getString(
       "blockchain"
     );
-    const permitted_role = await interaction.options.getRole("permitted-role")
+    const permittedRole = await interaction.options.getRole("permitted-role")
       .id;
     const channelId: number = await interaction.options.getChannel("channel")
       .id;
@@ -83,7 +83,7 @@ module.exports = {
         },
         {
           name: "Role",
-          value: `<@&${permitted_role}>`,
+          value: `<@&${permittedRole}>`,
           inline: true,
         },
       ],
@@ -97,66 +97,69 @@ module.exports = {
       },
     };
 
-    await guild.find({ serveurId: serveurId }).then(async (guildFound) => {
-      if (!guildFound.length) {
-        await new guild({
-          serveur_id: serveurId,
-          name: serveurName,
-          date_install: Date.now(),
-        }).save();
+    try {
+      await guild.find({ serveurId: serveurId }).then(async (guildFound) => {
+        if (!guildFound.length) {
+          await new guild({
+            serveur_id: serveurId,
+            name: serveurName,
+            date_install: Date.now(),
+          }).save();
 
-        const wl = await new whitelist({
-          serverId: serveurId,
-          title: title,
-          blockchain: blockchain,
-          price: price,
-          description: desc,
-          permitted_role: permitted_role,
-          date: Date.now(),
-        }).save();
+          const wl = await new whitelist({
+            serverId: serveurId,
+            title: title,
+            blockchain: blockchain,
+            price: price,
+            description: desc,
+            permitted_role: permittedRole,
+            date: Date.now(),
+          }).save();
 
-        await guild.findOneAndUpdate(
-          { serveur_id: serveurId },
-          {
-            $push: {
-              whitelists: wl._id,
+          await guild.findOneAndUpdate(
+            { serveur_id: serveurId },
+            {
+              $push: {
+                whitelists: wl._id,
+              },
             },
-          },
-          { new: true }
-        );
+            { new: true }
+          );
 
-        client.channels.cache.get(channelId).send({
-          embeds: [embed],
-          components: [btnWallet({ wl: wl?._id.toString() })],
-        });
-      } else {
-        const wl = await new whitelist({
-          serverId: serveurId,
-          title: title,
-          blockchain: blockchain,
-          description: desc,
-          price: price,
-          permitted_role: permitted_role,
-          date: Date.now(),
-        }).save();
+          client.channels.cache.get(channelId).send({
+            embeds: [embed],
+            components: [btnWallet({ wl: wl?._id.toString() })],
+          });
+        } else {
+          const wl = await new whitelist({
+            serverId: serveurId,
+            title: title,
+            blockchain: blockchain,
+            description: desc,
+            price: price,
+            permitted_role: permittedRole,
+            date: Date.now(),
+          }).save();
 
-        await guild.findOneAndUpdate(
-          { serveur_id: serveurId },
-          {
-            $push: {
-              whitelists: wl._id,
+          await guild.findOneAndUpdate(
+            { serveur_id: serveurId },
+            {
+              $push: {
+                whitelists: wl._id,
+              },
             },
-          },
-          { new: true }
-        );
+            { new: true }
+          );
 
-        client.channels.cache.get(channelId).send({
-          embeds: [embed],
-          components: [btnWallet({ wl: wl?._id.toString() })],
-        });
-      }
-    });
-
-    interaction.reply({ content: "Whitelist created ✅" });
+          client.channels.cache.get(channelId).send({
+            embeds: [embed],
+            components: [btnWallet({ wl: wl?._id.toString() })],
+          });
+        }
+      });
+      interaction.reply({ content: "Whitelist created ✅" });
+    } catch (e) {
+      console.log(e);
+    }
   },
 };

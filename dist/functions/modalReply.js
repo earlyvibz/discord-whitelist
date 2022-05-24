@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const modalReply = ({ content, modal, }) => __awaiter(void 0, void 0, void 0, function* () {
     yield modal.deferReply({ ephemeral: true });
     modal.followUp({
-        content: content,
+        content,
         ephemeral: true,
     });
 });

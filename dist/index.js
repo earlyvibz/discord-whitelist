@@ -35,19 +35,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.client = exports.SlashCommandBuilder = exports.guildId = exports.clientId = exports.token = void 0;
+exports.env = exports.client = exports.SlashCommandBuilder = exports.guildId = exports.clientId = exports.token = void 0;
+const dotenv_1 = __importDefault(require("dotenv"));
+const solanaWeb3 = __importStar(require("@solana/web3.js"));
 const whitelist_1 = __importDefault(require("./database/shema/whitelist"));
 const whitelisted_1 = __importDefault(require("./database/shema/whitelisted"));
 const command_1 = __importDefault(require("./functions/command"));
-const { Modal, TextInputComponent, showModal } = require("discord-modals");
-const dotenv_1 = __importDefault(require("dotenv"));
 const modalReply_1 = __importDefault(require("./functions/modalReply"));
+const { Modal, TextInputComponent, showModal } = require("discord-modals");
 const mongoose = require("mongoose");
 const { Client, Intents } = require("discord.js");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 exports.SlashCommandBuilder = SlashCommandBuilder;
 const discordModals = require("discord-modals");
 dotenv_1.default.config();
+const env = process.env.NODE_ENV;
+exports.env = env;
 const token = process.env.DISCORD_TOKEN;
 exports.token = token;
 const clientId = process.env.CLIENT_ID;
@@ -57,7 +60,7 @@ exports.guildId = guildId;
 const db = process.env.DATABASE;
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 exports.client = client;
-const solanaWeb3 = __importStar(require("@solana/web3.js"));
+console.log(env);
 discordModals(client);
 // Function command from /functions/command
 (0, command_1.default)(client);
@@ -94,15 +97,15 @@ client.on("interactionCreate", (interaction) => __awaiter(void 0, void 0, void 0
             .addComponents(new TextInputComponent() // We create a Text Input Component
             .setCustomId("walletId")
             .setLabel("Your address")
-            .setStyle("SHORT") //IMPORTANT: Text Input Component Style can be 'SHORT' or 'LONG'
+            .setStyle("SHORT") // IMPORTANT: Text Input Component Style can be 'SHORT' or 'LONG'
             .setMinLength(42)
             .setMaxLength(44)
             .setPlaceholder("0x0000...")
             .setRequired(true) // If it's required or not
         );
         showModal(modal, {
-            client: client,
-            interaction: interaction, // Show the modal with interaction data.
+            client,
+            interaction, // Show the modal with interaction data.
         });
     }
 }));
@@ -112,12 +115,11 @@ client.on("modalSubmit", (modal) => __awaiter(void 0, void 0, void 0, function* 
     const result = regex.test(address);
     const username = `${modal.user.username}#${modal.user.discriminator}`;
     const modalId = modal.customId;
-    const userWl = yield whitelisted_1.default.findOne({ username: username });
+    const userWl = yield whitelisted_1.default.findOne({ username });
     const currentWl = yield whitelist_1.default.findOne({ _id: modalId });
-    const permitted_role = currentWl === null || currentWl === void 0 ? void 0 : currentWl.permitted_role;
-    const price = currentWl === null || currentWl === void 0 ? void 0 : currentWl.price;
+    const permittedRole = currentWl === null || currentWl === void 0 ? void 0 : currentWl.permitted_role;
     const blockchain = currentWl === null || currentWl === void 0 ? void 0 : currentWl.blockchain;
-    let verifyRole = modal.member._roles.includes(permitted_role);
+    const verifyRole = modal.member._roles.includes(permittedRole);
     let verifyFormatAddress;
     if (blockchain === "SOL") {
         try {
@@ -132,31 +134,31 @@ client.on("modalSubmit", (modal) => __awaiter(void 0, void 0, void 0, function* 
         verifyFormatAddress = result;
     }
     if (userWl === null || userWl === void 0 ? void 0 : userWl.whitelists.includes(modalId)) {
-        (0, modalReply_1.default)({ content: "You are already registered ! ❌", modal: modal });
+        (0, modalReply_1.default)({ content: "You are already registered ! ❌", modal });
     }
     else if (verifyFormatAddress === false) {
         (0, modalReply_1.default)({
             content: "Your address is not correctly formatted ! ❌",
-            modal: modal,
+            modal,
         });
     }
     else if (verifyRole === false) {
         (0, modalReply_1.default)({
-            content: `You don't have the right role ! ❌`,
-            modal: modal,
+            content: "You don't have the right role ! ❌",
+            modal,
         });
     }
     else {
         if (userWl === null) {
             yield new whitelisted_1.default({
-                address: address,
-                username: username,
+                address,
+                username,
                 date_enter: Date.now(),
                 whitelists: modalId,
             }).save();
         }
         else {
-            yield whitelisted_1.default.updateOne({ username: username }, {
+            yield whitelisted_1.default.updateOne({ username }, {
                 $addToSet: {
                     whitelists: modalId,
                 },
@@ -169,7 +171,7 @@ client.on("modalSubmit", (modal) => __awaiter(void 0, void 0, void 0, function* 
         }, { new: true });
         (0, modalReply_1.default)({
             content: "Congrats ! You're whitelisted ✅",
-            modal: modal,
+            modal,
         });
     }
 }));

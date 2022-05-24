@@ -7,7 +7,7 @@ const modalReply = async ({
 }) => {
   await modal.deferReply({ ephemeral: true });
   modal.followUp({
-    content: content,
+    content,
     ephemeral: true,
   });
 };
