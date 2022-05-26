@@ -13,15 +13,22 @@ module.exports = {
     const wlEmbed = new MessageEmbed().setDescription("Info whitelist");
     const channelId = await interaction.channelId;
 
-    try {
-      for (const wl of currentWl) {
-        wlEmbed.addField(`${wl?.title}`, `Id : ${wl._id}`, true);
-      }
+    if (currentWl.length === 0) {
+      interaction.reply({
+        content: "There are no registered whitelists.",
+        ephemeral: true,
+      });
+    } else {
+      try {
+        for (const wl of currentWl) {
+          wlEmbed.addField(`${wl?.title}`, `Id : ${wl._id}`, true);
+        }
 
-      client.channels.cache.get(channelId).send({ embeds: [wlEmbed] });
-      interaction.reply({ content: "Informations :" });
-    } catch (e) {
-      console.log(e);
+        client.channels.cache.get(channelId).send({ embeds: [wlEmbed] });
+        interaction.reply({ content: "Informations :" });
+      } catch (e) {
+        console.log(e);
+      }
     }
   },
 };
